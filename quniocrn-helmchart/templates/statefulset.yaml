@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "mychart.fullname" . }}-postgres
+  labels:
+    io.kompose.service: postgres
+  {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.postgres.replicas }}
+  selector:
+    matchLabels:
+      io.kompose.service: postgres
+  serviceName: ""
+  template:
+    metadata:
+      labels:
+        io.kompose.network/qunicorn-core-qunicorn: "true"
+        io.kompose.service: postgres
+    spec:
+      containers:
+      - env:
+        - name: PGDATA
+          value: {{ quote .Values.postgres.postgres.env.pgdata }}
+        - name: POSTGRES_DB
+          value: {{ quote .Values.postgres.postgres.env.postgresDb }}
+        - name: POSTGRES_PASSWORD
+          value: {{ quote .Values.postgres.postgres.env.postgresPassword }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.postgres.postgres.image.repository }}:{{ .Values.postgres.postgres.image.tag
+          | default .Chart.AppVersion }}
+        name: postgres
+        ports:
+        - containerPort: 5432
+          hostPort: 5432
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+  updateStrategy: {}

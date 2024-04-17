@@ -1,0 +1,215 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}-broker
+  labels:
+    io.kompose.service: broker
+  {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.broker.replicas }}
+  selector:
+    matchLabels:
+      io.kompose.service: broker
+    {{- include "mychart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        io.kompose.network/qunicorn-core-qunicorn: "true"
+        io.kompose.service: broker
+      {{- include "mychart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.broker.broker.image.repository }}:{{ .Values.broker.broker.image.tag
+          | default .Chart.AppVersion }}
+        name: broker
+        ports:
+        - containerPort: 6379
+          hostPort: 6379
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}-keycloak-postgres
+  labels:
+  {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+    {{- include "mychart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: postgres
+      {{- include "mychart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: PGDATA
+          value: {{ quote .Values.keycloakPostgres.postgres.env.pgdata }}
+        - name: POSTGRES_PASSWORD
+          value: {{ quote .Values.keycloakPostgres.postgres.env.postgresPassword }}
+        - name: POSTGRES_DB
+          value: {{ quote .Values.keycloakPostgres.postgres.env.postgresDb }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.keycloakPostgres.postgres.image.repository }}:{{ .Values.keycloakPostgres.postgres.image.tag
+          | default .Chart.AppVersion }}
+        name: postgres
+        ports:
+        - containerPort: 5432
+          name: postgres
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: keycloak-pgdata
+      volumes:
+      - name: keycloak-pgdata
+        persistentVolumeClaim:
+          claimName: {{ include "mychart.fullname" . }}-postgres-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}-keycloak
+  labels:
+    app: keycloak
+  {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.keycloak.replicas }}
+  selector:
+    matchLabels:
+      app: keycloak
+    {{- include "mychart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: keycloak
+      {{- include "mychart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: DB_VENDOR
+          value: {{ quote .Values.keycloak.keycloak.env.dbVendor }}
+        - name: KEYCLOAK_USER
+          value: {{ quote .Values.keycloak.keycloak.env.keycloakUser }}
+        - name: KEYCLOAK_PASSWORD
+          value: {{ quote .Values.keycloak.keycloak.env.keycloakPassword }}
+        - name: DB_ADDR
+          value: {{ quote .Values.keycloak.keycloak.env.dbAddr }}
+        - name: DB_USER
+          value: {{ quote .Values.keycloak.keycloak.env.dbUser }}
+        - name: DB_PASSWORD
+          value: {{ quote .Values.keycloak.keycloak.env.dbPassword }}
+        - name: KEYCLOAK_IMPORT
+          value: {{ quote .Values.keycloak.keycloak.env.keycloakImport }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.keycloak.keycloak.image.repository }}:{{ .Values.keycloak.keycloak.image.tag
+          | default .Chart.AppVersion }}
+        name: keycloak
+        ports:
+        - containerPort: 8080
+          hostPort: 8081
+          protocol: TCP
+        resources: {}
+        volumeMounts:
+        - mountPath: /import
+          name: keycloak-volume
+      volumes:
+      - configMap:
+          name: {{ include "mychart.fullname" . }}-keycloak-configmap
+        name: keycloak-volume
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}-server
+  labels:
+    io.kompose.service: server
+  {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.server.replicas }}
+  selector:
+    matchLabels:
+      io.kompose.service: server
+    {{- include "mychart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        io.kompose.network/qunicorn-core-qunicorn: "true"
+        io.kompose.service: server
+      {{- include "mychart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: CONTAINER_MODE
+          value: {{ quote .Values.server.server.env.containerMode }}
+        - name: BROKER_URL
+          value: {{ quote .Values.server.server.env.brokerUrl }}
+        - name: JWKS_URL
+          value: {{ quote .Values.server.server.env.jwksUrl }}
+        - name: DB_URL
+          value: {{ quote .Values.server.server.env.dbUrl }}
+        - name: SERVER_PORT
+          value: {{ quote .Values.server.server.env.serverPort }}
+        - name: NUMBA_CACHE_DIR
+          value: {{ quote .Values.server.server.env.numbaCacheDir }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.server.server.image.repository }}:{{ .Values.server.server.image.tag
+          | default .Chart.AppVersion }}
+        name: server
+        ports:
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mychart.fullname" . }}-worker
+  labels:
+    io.kompose.service: worker
+  {{- include "mychart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.worker.replicas }}
+  selector:
+    matchLabels:
+      io.kompose.service: worker
+    {{- include "mychart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        io.kompose.network/qunicorn-core-qunicorn: "true"
+        io.kompose.service: worker
+      {{- include "mychart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: BROKER_URL
+          value: {{ quote .Values.worker.worker.env.brokerUrl }}
+        - name: CONTAINER_MODE
+          value: {{ quote .Values.worker.worker.env.containerMode }}
+        - name: DB_URL
+          value: {{ quote .Values.worker.worker.env.dbUrl }}
+        - name: NUMBA_CACHE_DIR
+          value: {{ quote .Values.worker.worker.env.numbaCacheDir }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.worker.worker.image.repository }}:{{ .Values.worker.worker.image.tag
+          | default .Chart.AppVersion }}
+        name: worker
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
