@@ -2240,7 +2240,7 @@ server:
     env:
       brokerUrl: redis://broker:6379
       containerMode: server
-      dbUrl: postgresql://postgres:passwd@postgressd/qunicorn
+      dbUrl: postgresql://postgres:passwd@postgres/qunicorn
       jwksUrl: http://keycloak:8081/auth/realms/qunicorn/protocol/openid-connect/certs
       numbaCacheDir: /app/cache
       serverPort: "8080"
