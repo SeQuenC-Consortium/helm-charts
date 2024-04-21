@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+    - name: "8081"
+      port: 8081
+      targetPort: 8080
+  selector:
+    app: keycloak
+  type: {{ .Values.keycloak.type }}
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: {{ .Values.keycloak.replicas }}
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: keycloak/keycloak:latest
+          env:
+            - name: DB_VENDOR
+              value: {{ quote .Values.keycloak.keycloak.env.dbVendor }}
+            - name: KEYCLOAK_USER
+              value: {{ quote .Values.keycloak.keycloak.env.keycloakUser }}
+            - name: KEYCLOAK_PASSWORD
+              value: {{ quote .Values.keycloak.keycloak.env.keycloakPassword }}
+            - name: DB_ADDR
+              value: {{ quote .Values.keycloak.keycloak.env.dbAddr }}
+            - name: DB_USER
+              value: {{ quote .Values.keycloak.keycloak.env.dbUser }}
+            - name: DB_PASSWORD
+              value: {{ quote .Values.keycloak.keycloak.env.dbPassword }}
+            - name: KEYCLOAK_IMPORT
+              value: {{ quote .Values.keycloak.keycloak.env.keycloakImport }}
+          ports:
+            - containerPort: 8080
+              hostPort: 8081
+              protocol: TCP
+          volumeMounts:
+            - name: keycloak-volume
+              mountPath: /import
+      volumes:
+        - name: keycloak-volume
+          configMap:
+            name: keycloak-configmap
