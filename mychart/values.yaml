@@ -23,10 +23,6 @@ keycloak:
 
 
 keycloakPostgres:
-  ports:
-  - name: postgres
-    port: 5432
-    targetPort: 0
   postgres:
     env:
       pgdata: /var/lib/postgresql/data/pgdata
@@ -35,14 +31,8 @@ keycloakPostgres:
     image:
       repository: postgres
       tag: "15.3"
-  type: ClusterIP
-kubernetesClusterDomain: cluster.local
 
 postgres:
-  ports:
-  - name: "5432"
-    port: 5432
-    targetPort: 5432
   postgres:
     env:
       pgdata: /var/lib/postgresql/data/pgdata
@@ -60,10 +50,6 @@ pvc:
     storageRequest: 1Gi
 
 server:
-  ports:
-  - name: "8080"
-    port: 8080
-    targetPort: 8080
   replicas: 1
   server:
     env:
@@ -79,10 +65,6 @@ server:
   type: LoadBalancer
 
 worker:
-  ports:
-  - name: "6379"
-    port: 6379
-    targetPort: 6379
   replicas: 1
   type: ClusterIP
   worker:
