@@ -18,10 +18,6 @@ keycloak:
     image:
       repository: keycloak/keycloak
       tag: latest
-  ports:
-  - name: "8081"
-    port: 8081
-    targetPort: 8080
   replicas: 1
   type: LoadBalancer
 
