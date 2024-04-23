@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "mychart.fullname" . }}-keycloak-configmap
-  labels:
-  {{- include "mychart.labels" . | nindent 4 }}
-data:
-  realm.json: {{ .Values.keycloakConfigmap.realmJson | toYaml | indent 1 }}
