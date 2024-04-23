@@ -32,7 +32,8 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: keycloak/keycloak:latest
+          image: {{ .Values.keycloak.keycloak.image.repository }}:{{ .Values.keycloak.keycloak.image.tag
+          | default .Chart.AppVersion }}
           env:
             - name: DB_VENDOR
               value: {{ quote .Values.keycloak.keycloak.env.dbVendor }}

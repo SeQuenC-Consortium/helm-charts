@@ -37,7 +37,7 @@ spec:
   ports:
     - name: "6379"
       port: 6379
-      targetPort: 6379
+      targetPort: 6379 
   selector:
     io.kompose.service: broker
 status:

@@ -32,11 +32,11 @@ spec:
           name: postgres
           env:
             - name: PGDATA
-              value: /var/lib/postgresql/data/pgdata
+              value: {{ quote .Values.keycloakPostgres.postgres.env.pgdata }}
             - name: POSTGRES_PASSWORD
-              value: passwd
+              value: {{ quote .Values.keycloakPostgres.postgres.env.postgresPassword }}
             - name: POSTGRES_DB
-              value: keycloak
+              value: {{ quote .Values.keycloakPostgres.postgres.env.postgresDb }}
           ports:
             - containerPort: 5432
               name: postgres

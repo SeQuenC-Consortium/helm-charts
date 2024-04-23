@@ -19,14 +19,15 @@ spec:
       containers:
         - env:
             - name: BROKER_URL
-              value: redis://broker:6379
+              value: {{ quote .Values.worker.worker.env.brokerUrl }}
             - name: CONTAINER_MODE
-              value: worker
+              value: {{ quote .Values.worker.worker.env.containerMode }}
             - name: DB_URL
-              value: postgresql://postgres:passwd@postgres/qunicorn
+              value: {{ quote .Values.worker.worker.env.dbUrl }}
             - name: NUMBA_CACHE_DIR
-              value: /app/cache
-          image: iaasgeorgdl/qunicorn:release.11.23
+              value: {{ quote .Values.worker.worker.env.numbaCacheDir }}
+          image: {{ .Values.worker.worker.image.repository }}:{{ .Values.worker.worker.image.tag
+          | default .Chart.AppVersion }}
           name: worker
           ports:
             - containerPort: 6379
