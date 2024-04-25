@@ -6,7 +6,7 @@ metadata:
   name: postgres
   namespace: default
 spec:
-  replicas: {{ .Values.postgres.replica}}
+  replicas: {{ .Values.postgres.replicas}}
   selector:
     matchLabels:
       io.kompose.service: postgres
