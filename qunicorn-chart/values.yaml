@@ -42,7 +42,6 @@ postgres:
       repository: postgres
       tag: "15.3"
   replicas: 1
-  type: ClusterIP
 
 pvc:
   postgresPvc:
