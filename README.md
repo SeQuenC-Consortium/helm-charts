@@ -1,6 +1,6 @@
-# SeQuenC Helm charts repository
+# Qunicorn Helm charts repository
 
-This repository is intended to store helm charts for components that constitute the SeQuenC platform.
+This repository is intended to store helm charts related to Qunicorn project.
 
 ## Usage
 
