@@ -54,4 +54,4 @@ spec:
       targetPort: 8080
   selector:
     io.kompose.service: server
-  type: LoadBalancer
+  type: {{ .Values.server.type }}
