@@ -28,16 +28,25 @@ To uninstall the chart:
 
 
 Converting YAML Files Into Helm Charts
+
 We do it in 2 ways:
+
 1) Using helmify
+   
 2) Manually
    
 First, we will understand using Helmify
+
 Step 1. Installation of helmify
+
 Step2. Convert YAML files to Helm chart
+
 For single yaml file: 
+
 `cat <your-yamlfile-name>.yaml | helmify <chart-name>`
+
 From directory with yamls:
+
 `awk 'FNR==1 && NR!=1  {print "---"}{print}' /<my_directory>/*.yaml | helmify <helmchart-folder-name>`
 
 
