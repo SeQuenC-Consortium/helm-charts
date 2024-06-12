@@ -2,7 +2,7 @@ broker:
   broker:
     image:
       repository: redis
-      tag: 7.0.12
+      tag: 7.2.0
   replicas: 1
 
 keycloak:
@@ -54,7 +54,7 @@ server:
     env:
       brokerUrl: redis://broker:6379
       containerMode: server
-      dbUrl: postgresql://postgres:passwd@postgres/qunicorn
+      dbUrl: postgresql+psycopg://postgres:passwd@postgres/qunicorn
       jwksUrl: http://keycloak:8081/auth/realms/qunicorn/protocol/openid-connect/certs
       numbaCacheDir: /app/cache
       serverPort: "8080"
@@ -69,7 +69,7 @@ worker:
     env:
       brokerUrl: redis://broker:6379
       containerMode: worker
-      dbUrl: postgresql://postgres:passwd@postgres/qunicorn
+      dbUrl: postgresql+psycopg://postgres:passwd@postgres/qunicorn
       numbaCacheDir: /app/cache
     image:
       repository: ghcr.io/qunicorn/qunicorn-core
