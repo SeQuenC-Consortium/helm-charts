@@ -8,15 +8,23 @@ broker:
 keycloak:
   keycloak:
     env:
-      dbAddr: keycloak-postgres
-      dbPassword: passwd
-      dbUser: postgres
-      dbVendor: postgres
-      keycloakImport: /import/realm.json
-      keycloakPassword: kc_pass
-      keycloakUser: kc_user
+      DB_ADDR: keycloak_postgres
+      DB_DATABASE: keycloak
+      DB_PASSWORD: pas443
+      DB_PORT: "5432"
+      DB_SCHEMA: public
+      DB_USER: keycloak
+      DB_VENDOR: postg443
+      KC_HTTP_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+      KC_PROXY_MODE: edge
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_PASSWORD: kc_pass
+      KEYCLOAK_USER: kc_user
+      
     image:
-      repository: keycloak/keycloak
+      repository: quay.io/keycloak/keycloak
       tag: latest
   replicas: 1
   type: LoadBalancer
