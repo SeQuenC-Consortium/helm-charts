@@ -38,50 +38,34 @@ spec:
 
           env:
             - name: DB_ADDR
-              value: keycloak_postgres
+              value: {{ quote .Values.keycloak.keycloak.env.DB_ADDR }}
             - name: DB_DATABASE
-              value: keycloak
+              value: {{ quote .Values.keycloak.keycloak.env.DB_DATABASE }}
             - name: DB_PASSWORD
-              value: pas443
+              value: {{ quote .Values.keycloak.keycloak.env.DB_PASSWORD }}
             - name: DB_PORT
-              value: "5432"
+              value: {{ quote .Values.keycloak.keycloak.env.DB_PORT }}
             - name: DB_SCHEMA
-              value: public
+              value: {{ quote .Values.keycloak.keycloak.env.DB_SCHEMA }}
             - name: DB_USER
-              value: keycloak
+              value: {{ quote .Values.keycloak.keycloak.env.DB_USER }}
             - name: DB_VENDOR
-              value: postg443
+              value: {{ quote .Values.keycloak.keycloak.env.DB_VENDOR }}
             - name: KC_HTTP_ENABLED
-              value: "true"
+              value: {{ quote .Values.keycloak.keycloak.env.KC_HTTP_ENABLED }}
             - name: KC_METRICS_ENABLED
-              value: "true"
+              value: {{ quote .Values.keycloak.keycloak.env.KC_METRICS_ENABLED }}
             - name: KC_PROXY_MODE
-              value: edge
+              value: {{ quote .Values.keycloak.keycloak.env.KC_PROXY_MODE }}
             - name: KEYCLOAK_ADMIN
-              value: admin
+              value: {{ quote .Values.keycloak.keycloak.env.KEYCLOAK_ADMIN }}
             - name: KEYCLOAK_ADMIN_PASSWORD
-              value: admin
+              value: {{ quote .Values.keycloak.keycloak.env.KEYCLOAK_ADMIN_PASSWORD }}
             - name: KEYCLOAK_PASSWORD
-              value: kc_pass
+              value: {{ quote .Values.keycloak.keycloak.env.KEYCLOAK_PASSWORD }}
             - name: KEYCLOAK_USER
-              value: kc_user
+              value: {{ quote .Values.keycloak.keycloak.env.KEYCLOAK_USER }}
           
-          # env:
-          #   - name: DB_VENDOR
-          #     value: {{ quote .Values.keycloak.keycloak.env.dbVendor }}
-          #   - name: KEYCLOAK_USER
-          #     value: {{ quote .Values.keycloak.keycloak.env.keycloakUser }}
-          #   - name: KEYCLOAK_PASSWORD
-          #     value: {{ quote .Values.keycloak.keycloak.env.keycloakPassword }}
-          #   - name: DB_ADDR
-          #     value: {{ quote .Values.keycloak.keycloak.env.dbAddr }}
-          #   - name: DB_USER
-          #     value: {{ quote .Values.keycloak.keycloak.env.dbUser }}
-          #   - name: DB_PASSWORD
-          #     value: {{ quote .Values.keycloak.keycloak.env.dbPassword }}
-          #   - name: KEYCLOAK_IMPORT
-          #     value: {{ quote .Values.keycloak.keycloak.env.keycloakImport }}
-              
           ports:
             - containerPort: 8080
               hostPort: 8080
